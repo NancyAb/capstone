@@ -2,27 +2,22 @@
 
 ## 1 Agrobotix
 
-run python code on tlog and check results
-404 observations
-check features and quality match.
-need to know how to merge data
+I have recieved two days of telemetry logs with about 100,000 lines. These logs correspond to
+two image quality values. The goal is to be able to use the log to predict quality values.
+Currently this is done by a person looking at the image with a one day turnaround to the
+ground team. Agribotix has let me know that the telemtry radio signal strength to flight below 80%
+may result in trouble with processing.
 
-telemtry radio signal strength to flight below 80%
-trouble with processing
+I have imported the data into mongo and also into a wide - 269 - dataframe on Pandas.
 
-automation of classifaction
-
-real time classification tlog results for image quality
-
-check for normalization of dependent variable!!
-
-
+The data are about 80% sparse as each row is a hundreth of a second record and not all 
+times have all variables.
 
 GOALS -> Predict picture quality on-site
 
 APPROACH -> Laptop Python code to read current log on-site and use model to predict results
 
-PROFILE   -> Import data into MongoDB as a 'collection"
+PROFILE   -> Import data into MongoDB as a 'collection'
                      Export structured data for profiling - data elements, density, variance
                      Visually inspect geo / yaw / pitch/ roll elements with Tableau graphics
                      Visually inspect and question outliers
@@ -31,6 +26,8 @@ PROFILE   -> Import data into MongoDB as a 'collection"
              down factors
 
  ANALYSIS ->Hold out 25% of data for testing validation of model.
+                     Use time series variable slop as potential factors
+                     Use feature standard deviation as potential factors
                      Normalize features
                      First pass with random forest
                                - large feature count
@@ -39,15 +36,12 @@ PROFILE   -> Import data into MongoDB as a 'collection"
                                - interpretable results
                                - feature importance
                      k-fold validation for prediction accuracy
+                     Gradient boost to improve prediction
 
-DETAILS ->
-mongodb data collection of all 401 missions
-collection contains documents with embedded sub-documents:
+DETAILS -> Sample log rows:
 
--> mission id document
-    -> event id with timestamp sub-document (e.g. 2015-09-12 12:35:57.61:.0.0) timestamp is not unique so need additional id
-          -> drone event e.g. (NAV_CONTROLLER_OUTPUT, FENCE_STATUS, GLOBAL_POSITION_INT)
-               -> drone event details (e.g. {nav_roll : 0.0, nav_pitch : 0.0, nav_bearing : 68, target_bearing : 90, wp_dist : 0, alt_error : 0.0, aspd_error : 0.0, xtr})
+2015-09-15 12:20:43.22: HEARTBEAT {type : 6, autopilot : 8, base_mode : 0, custom_mode : 0, system_status : 0, mavlink_version : 3}
+2015-09-15 12:20:43.23: TERRAIN_REPORT {lat : 451473107, lon : -729875865, spacing : 100, terrain_height : 57.573261261, current_height : 0.304172813892, pending : 0, loaded : 336}
 
 n [62]: sign_df.head(34)
 Out[62]: 
