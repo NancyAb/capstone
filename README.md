@@ -46,12 +46,13 @@ DETAILS -> Sample log rows:
 
 n [62]: sign_df.head(34)
 Out[62]: 
-                   event             name             p              t
-0                VFR_HUD         airspeed  1.634296e+01   4.520671e-59
-1                VFR_HUD      groundspeed  1.634296e+01   4.520671e-59
-2                VFR_HUD          heading  4.943246e+00   7.841505e-07
-3                VFR_HUD         throttle -1.045811e+01   1.971107e-25
-4                VFR_HUD              alt -3.249225e+00   1.162042e-03
+count|event|name|p|t
+-----|-----|----|-|-
+0|VFR_HUD|airspeed|1.634296e+01|4.520671e-59
+1|VFR_HUD|groundspeed|1.634296e+01|4.520671e-59
+2|VFR_HUD|heading|4.943246e+00|7.841505e-07
+3|VFR_HUD|throttle|-1.045811e+01|1.971107e-25
+4|VFR_HUD|alt -3.249225e+00|1.162042e-03
 5                VFR_HUD            climb -4.334992e+00   1.475737e-05
 0                  AHRS2             roll -1.708932e+00   8.750321e-02
 1                  AHRS2            pitch -1.343402e+00   1.791809e-01
