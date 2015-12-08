@@ -13,32 +13,36 @@ I have imported the data into mongo and also into a wide - 269 - dataframe on Pa
 The data are about 80% sparse as each row is a hundreth of a second record and not all 
 times have all variables.
 
-GOALS -> Predict picture quality on-site
+* GOALS -> Predict picture quality on-site
 
-APPROACH -> Laptop Python code to read current log on-site and use model to predict results
+* APPROACH -> Laptop Python code to read current log on-site and use model to predict results
 
-PROFILE   -> Import data into MongoDB as a 'collection'
-                     Export structured data for profiling - data elements, density, variance
-                     Visually inspect geo / yaw / pitch/ roll elements with Tableau graphics
-                     Visually inspect and question outliers
+* PROFILE
 
-             Hypothesis test to see if mean or variance is different between groups to narrow
-             down factors
+  1. Import data into MongoDB as a 'collection'
+  2. Export structured data for profiling - data elements, density, variance
+  3. Visually inspect geo / yaw / pitch/ roll elements with Tableau graphics
+  4. Visually inspect and question outliers
+  5. Hypothesis test to see if mean or variance is different between groups to narrow down factors
 
- ANALYSIS ->Hold out 25% of data for testing validation of model.
-                    Balance quality responses as uniform distribuion 
-                     Use time series variable slope as potential factors
-                     Use feature standard deviation as potential factors
-                     Normalize features
-                     First pass with random forest
-                               - large feature count
-                               - small number of observations
-                     Lasso regularization
-                               - interpretable results
-                               - feature importance
-                     k-fold validation for prediction accuracy
-                     Gradient boost to improve prediction
+* ANALYSIS
+ 
+  1. Hold out 25% of data for testing validation of model.
+  2. Balance quality responses as uniform distribuion 
+  3. Use time series variable slope as potential factors
+  4. Use feature standard deviation as potential factors
+  5. Normalize features
+  6. First pass with random forest
+    * large feature count
+    * small number of observations
+  7. Lasso regularization
+    * interpretable results
+    * feature importance
+  8. k-fold validation for prediction accuracy
+  9. Gradient boost to improve prediction
+  10. Integrate weather given lat and long
 
+ * Significance Results
 
 Count | Event | Name   | p |   t
 ----- | ----- | ------ |  --- | ---
@@ -77,7 +81,7 @@ Count | Event | Name   | p |   t
 2|SCALED_PRESSURE|press_diff|7.30|0.0
 3|SCALED_PRESSURE|temperature|3.74|0.0
 
-DETAILS -> Sample log rows:
+ * Sample log rows:
 
 2015-09-15 12:20:43.22: HEARTBEAT {type : 6, autopilot : 8, base_mode : 0, custom_mode : 0, system_status : 0, mavlink_version : 3}
 2015-09-15 12:20:43.23: TERRAIN_REPORT {lat : 451473107, lon : -729875865, spacing : 100, terrain_height : 57.573261261, current_height : 0.304172813892, pending : 0, loaded : 336}
