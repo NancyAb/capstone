@@ -26,7 +26,8 @@ PROFILE   -> Import data into MongoDB as a 'collection'
              down factors
 
  ANALYSIS ->Hold out 25% of data for testing validation of model.
-                     Use time series variable slop as potential factors
+                    Balance quality responses as uniform distribuion 
+                     Use time series variable slope as potential factors
                      Use feature standard deviation as potential factors
                      Normalize features
                      First pass with random forest
