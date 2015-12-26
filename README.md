@@ -1,119 +1,61 @@
-# Capstone Projects
+Real Time Picture Quality Prediction from an Agricultural Drone Flight Logs
+===========================================================================
 
-## 1 Agrobotix
+An agricultural drone takes snapshots of a field during its flight to categorize crop quality. The quality of the picture is influenced the smoothness of the flight which is reflected in the drone's time series telemetry logs. Using these logs and blending in third party forecast.io weather data, predictive models were compared to find the best predictor for flight's quality score. The resulting model can be used in the field to allow for another re-run of the flight.  Currently the pilot needs to wait for the data to be uploaded and manually scored at another site. If the flight needs to be re-run, the pilot returns to the site the next day and re-launches.
 
-I have recieved two days of telemetry logs with about 100,000 lines. These logs correspond to
-two image quality values. The goal is to be able to use the log to predict quality values.
-Currently this is done by a person looking at the image with a one day turnaround to the
-ground team. Agribotix has let me know that the telemtry radio signal strength to flight below 80%
-may result in trouble with processing.
+### Author
 
-I have imported the data into mongo and also into a wide - 269 - dataframe on Pandas.
+*Nancy Abramson*<br>
+[nabramson@ieee.org](mailto:nabramson@ieee.org)<br>
+github.com/NancyAb<br>
+January 2016
 
-The data are about 80% sparse as each row is a hundreth of a second record and not all 
-times have all variables.
+### Overview
 
-* GOALS -> Predict picture quality on-site
+Each of the 593 binary files that I recieved is a record of a drone flight. Each flight has an associated quality score. The flights are from different vehichles and may have recorded different events. For each flight, each event is rolled together with any other events for the same timestamp. This results in a sparse matrix because only some events are recorded at a time period. The flight is summarized with each event's minimum, maximum, standard deviation,  and median values for use in the forecasting model. Addition features of weather, radio signal strength, and flight duration were inclued to support quality prediction.
 
-* APPROACH -> Laptop Python code to read current log on-site and use model to predict results
+### Project Goals
 
-* PROFILE
+This project aims to
 
-  1. Import data into MongoDB as a 'collection'
-  2. Export structured data for profiling - data elements, density, variance
-  3. Visually inspect geo / yaw / pitch/ roll elements with Tableau graphics
-  4. Visually inspect and question outliers
-  5. Hypothesis test to see if mean or variance is different between groups to narrow down factors
+* provide a tool to read the flight and predict the picture quality remotely, 
+* apply machine learning techniques to provide insight on drone performance and picture quality.
 
-* ANALYSIS
- 
-  1. Hold out 25% of data for testing validation of model.
-  2. Balance quality responses as uniform distribuion 
-  3. Use time series variable slope as potential factors
-  4. Use feature standard deviation as potential factors
-  5. Normalize features
-  6. First pass with random forest
-    * large feature count
-    * small number of observations
-  7. Lasso regularization
-    * interpretable results
-    * feature importance
-  8. k-fold validation for prediction accuracy
-  9. Gradient boost to improve prediction
-  10. Integrate weather given lat and long
+### A Machine Learning Framework for PD
 
- * Significance Results
+As mentioned, one of the purposes of the project is to open up the insights yielded by machine learning to experts in the field of Parkinson's disease, few of which are practicioners of data science.  To facilitate access to these individuals, the analysis of the data using machine learning and interpretation of the results should be intuitive, and hide the technical complexity of the process.  
 
-Count | Event | Name   | p |   t
------ | ----- | ------ |  --- | ---
-0|VFR_HUD|airspeed|16.3|0.0
-1|VFR_HUD|groundspeed|16.3|0.0
-2|VFR_HUD|heading|4.94|0.0
-3|VFR_HUD|throttle|-10.5|0.0
-4|VFR_HUD|alt|-3.25|0.0
-5|VFR_HUD|climb|-4.33|0.0
-0|AHRS2|roll|-1.71|0.087
-1|AHRS2|pitch|-1.34|0.18
-2|AHRS2|yaw|-19.8|0.0
-3|AHRS2|altitude|-186.1|0.0
-4|AHRS2|lat|194,461|0.0
-5|AHRS2|lng|234,582|0.0
-0|RADIO_STATUS|rssi|105.69|0.0
-1|RADIO_STATUS|remrssi|-57.85|0.0
-2|RADIO_STATUS|txbuf|11,244.|0.0
-3|RADIO_STATUS|noise|238.8|0.0
-4|RADIO_STATUS|remnoise|158.06|0.0
-5|RADIO_STATUS|rxerrors|9.87|0.0
-6|RADIO_STATUS|fixed|34.47|0.0
-0|POWER_STATUS|Vcc|85.57|0.00
-1|POWER_STATUS|Vservo|110.89|0.00
-2|POWER_STATUS|flags|-inf|0.00
-0|NAV_CONTROLLER_OUTPUT|nav_roll|-1.23|0.217
-1|NAV_CONTROLLER_OUTPUT|nav_pitch|-5.18|0.0
-2|NAV_CONTROLLER_OUTPUT|nav_bearing|14.6|0.0
-3|NAV_CONTROLLER_OUTPUT|target_bearing|-14.7|0.0
-4|NAV_CONTROLLER_OUTPUT|wp_dist|6.79|0.0
-5|NAV_CONTROLLER_OUTPUT|alt_error|-9.55|0.0
-6|NAV_CONTROLLER_OUTPUT|aspd_error|NaN|NaN
-7|NAV_CONTROLLER_OUTPUT|xtrack_error|NaN|NaN
-0|SCALED_PRESSURE|time_boot_ms|-15.2|0.0
-1|SCALED_PRESSURE|press_abs|221.3|0.00
-2|SCALED_PRESSURE|press_diff|7.30|0.0
-3|SCALED_PRESSURE|temperature|3.74|0.0
+This philosophy is implemented in a three stage design.  PPMI data is available from a central web repository, but comes in form of many individual files containing various assessments; the files also differ slightly in their format.  The framework contains a 'backend' or import module to collect this data:  After some processing, the data is stored in a three-dimensional object, indexed by the timeline (many assessments are repeatedly performed in the study), subject ID, and the test modality itself.  Selecting available data requires familiarity with the study protocol, and is handled using a script.
 
- * Sample log rows:
+The data object is available to the statistics core module which handles data selection and slicing, simple statistics protocols, and all the correpondence with the 'frontend' that interfaces with the user.  The core also contains the machine learning unit, and hands rendering jobs to the graphics module.  (Some new display options, particularly suitable for PPMI data, have been developed for this project.)
 
-2015-09-15 12:20:43.22: HEARTBEAT {type : 6, autopilot : 8, base_mode : 0, custom_mode : 0, system_status : 0, mavlink_version : 3}
-2015-09-15 12:20:43.23: TERRAIN_REPORT {lat : 451473107, lon : -729875865, spacing : 100, terrain_height : 57.573261261, current_height : 0.304172813892, pending : 0, loaded : 336}
+The 'frontend' is a graphical interface, e.g. a web browser, that lets the user select particular PPMI datasets, suggests modes of analysis, and displays the results in strictly graphical form.  (To keep operation simple, no numerical data is transmitted.)  Although the communication protocol between core and frontend is already fixed, coding the GUI itself remains a work in progress.
 
-## 2 Google Analytics www.animalacupressure.com 
+The structure of the ML framework is depicted schematically below:
 
-data mining google analytics results
-supervised and unsupervised data
-recommendation engine if data is sparse?
-capture user attributes for recommendation system
-find out dimensions and number of rows of sample data
-Data is not aggregated.
+![Machine Learning Framework - Overview](PD-Learn Presentation/mlframework.jpg "Title")
 
-question using data?
-website google analytics for seo
-facebook
-click through rates
-analalytics google
-session
-tallgrasspublishers
-holland computers
-learn power online course
-google --
-first of december review.
+### Folder Contents
 
-## 3 mimi database with nursing home data
+The different elements of the project have been separated into several folders.  A quick overview is below; detailed information can be found in each folder.
 
-gartner third party data that is clean with nursing home search
-results. categorical nursing home recommender along different
-attributes e.g. according to price, proximity to urban area,
-different types of outcomes.
-potential unsupervised data analysis.
+*	*PPMI Backend*<br>
+	Data ingestion and organization scripts and methods.
+
+*	*PPMI Genetics*<br>
+	Methods to facilitate statistical genome analysis using the PLINK utility.  (Results to be implemented into the data at a later point.)
+
+*	*PPMI Graphics Library*<br>
+	Methods to render one- and two-dimensional data plots as .png images.
+
+*	*PPMI Learn*<br>
+	Machine learning support for the core module.
+
+*	*PPMI Statistics Core*<br>
+	Elements of the module responsible for data selection and analysis, communication with the user interface.
+
+*	*PD-Learn Presentation*<br>
+	A brief presentation of the project, including some preliminary findings.
 
 
 
